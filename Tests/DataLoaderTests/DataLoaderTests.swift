@@ -54,6 +54,50 @@ final class DataLoaderTests: XCTestCase {
 		wait(for: [expectation1, expectation2, expectation3, expectation4], timeout: 10.0)
 	}
 
+	func testDownloadDataFromMultipleThreads() {
+		let url = URL(string: "https://images.unsplash.com/photo-1598104997625-3200382e57e4?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=20&ixlib=rb-1.2.1&q=80&w=20")!
+
+		let queue1 = DispatchQueue(label: "queue1", attributes: .concurrent)
+		let queue2 = DispatchQueue(label: "queue2", attributes: .concurrent)
+		let queue3 = DispatchQueue(label: "queue3", attributes: .concurrent)
+		let queue4 = DispatchQueue(label: "queue4", attributes: .concurrent)
+
+		let expectation1 = XCTestExpectation(description: "Download image 1")
+		let expectation2 = XCTestExpectation(description: "Download image 2")
+		let expectation3 = XCTestExpectation(description: "Download image 3")
+		let expectation4 = XCTestExpectation(description: "Download image 4")
+
+		queue1.async {
+			RemoteLoader.shared.downloadData(from: url) { (result) in
+				XCTAssertNotNil(try? result.get(), "Failed to download data.")
+				expectation1.fulfill()
+			}
+		}
+
+		queue2.async {
+			RemoteLoader.shared.downloadData(from: url) { (result) in
+				XCTAssertNotNil(try? result.get(), "Failed to download data 2.")
+				expectation2.fulfill()
+			}
+		}
+
+		queue3.async {
+			RemoteLoader.shared.downloadData(from: url) { (result) in
+				XCTAssertNotNil(try? result.get(), "Failed to download data 3.")
+				expectation3.fulfill()
+			}
+		}
+
+		queue4.async {
+			RemoteLoader.shared.downloadData(from: url) { (result) in
+				XCTAssertNotNil(try? result.get(), "Failed to download data 4.")
+				expectation4.fulfill()
+			}
+		}
+
+		wait(for: [expectation1, expectation2, expectation3, expectation4], timeout: 10.0)
+	}
+
 	static var allTests = [
 		("testDownloadData", testDownloadData),
 		("testDownloadSameDataMultipleTimes", testDownloadSameDataMultipleTimes)
