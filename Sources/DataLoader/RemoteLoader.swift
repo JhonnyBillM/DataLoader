@@ -15,6 +15,8 @@ class RemoteLoader {
 	/// Stores the completion handlers for a given URL. This prevents to emit several download tasks for the same URL.
 	private var downloads = [String: [Handler]]()
 
+	static let shared = RemoteLoader()
+
 	/// Downloads data from the given URL and returns `Data` or `Error` to the passed `completion` parameter.
 	///
 	/// This method stores the completion handlers for a given URL to prevent duplicate requests; once a request completes for a given URL we call all the completion handlers tied to it.
