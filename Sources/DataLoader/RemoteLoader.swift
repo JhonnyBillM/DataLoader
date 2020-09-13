@@ -8,7 +8,7 @@
 import Foundation
 
 // TODO: add custom errors enum, if needed.
-
+// TODO: add docs.
 class RemoteLoader {
 	typealias Handler = (Result<Data, Error>) -> ()
 
