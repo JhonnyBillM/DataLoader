@@ -16,18 +16,10 @@ class RemoteLoader {
 	func downloadData(from url: URL, completion: @escaping (Result<Data, Error>) -> ()) {
 		// TODO: check if the download exists, if so, append the completion to the downloads and return.
 
-		let downloadTask = URLSession.shared.downloadTask(with: url) { (url, response, error) in
-
+		let downloadTask = URLSession.shared.dataTask(with: url) { (data, _, error) in
 			guard error == nil else { completion(.failure(error!)) ; return }
-			guard let url = url else { /*completion(.failure(error))*/ return }
-
-			do {
-				let data = try Data(contentsOf: url)
-				completion(.success(data))
-			} catch let error {
-				completion(.failure(error))
-				return
-			}
+			guard let data = data else { /*completion(.failure(error))*/ return }
+			completion(.success(data))
 		}
 		downloadTask.resume()
 	}
